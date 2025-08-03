@@ -2,7 +2,7 @@ name: Auto Update NSE Data
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
+    - cron: '0 */6 * * *' # Every 6 hours
   workflow_dispatch:
 
 jobs:
@@ -16,12 +16,14 @@ jobs:
         python-version: '3.9'
     - name: Install dependencies
       run: pip install requests beautifulsoup4
-    - name: Generate JS updater
+    - name: Generate NSE sectoral data (JSON)
       run: python get_nse_data.py
+    - name: Generate JS updater from JSON
+      run: python generate_nse_js.py
     - name: Commit & Push
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add nse_data_updater.js
-        git commit -m "Auto-update data" || echo "No changes"
+        git add nse_sectoral_data.json nse_data_updater.js
+        git commit -m "Auto-update NSE sectoral data and JS" || echo "No changes"
         git push
